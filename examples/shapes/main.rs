@@ -45,7 +45,7 @@ fn setup(
         .id();
 
     // Lights
-    commands.insert_resource(AmbientLight {
+    commands.insert_resource(GlobalAmbientLight {
         color: Color::WHITE,
         brightness: 500.,
         affects_lightmapped_meshes: true,

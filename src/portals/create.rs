@@ -175,6 +175,7 @@ fn create_portal(
     let (
         main_camera_entity,
         main_camera,
+        main_camera_render_target,
         main_camera_projection,
         main_camera_camera3d,
         main_camera_tonemapping,
@@ -188,7 +189,7 @@ fn create_portal(
     };
 
     let main_camera_viewport_size =
-        get_viewport_size(main_camera, size_params).unwrap_or_else(|| {
+        get_viewport_size(main_camera, main_camera_render_target, size_params).unwrap_or_else(|| {
             error!("Viewport size not found, creating portal with default sized image");
             UVec2::new(100, 100)
         });
@@ -281,9 +282,9 @@ fn create_portal(
                 .unwrap_or_else(Camera3d::default),
             Camera {
                 order: -1,
-                target: RenderTarget::Image(portal_image.clone().into()),
                 ..Camera::default()
             },
+            RenderTarget::Image(portal_image.clone().into()),
             main_camera_projection
                 .cloned()
                 .unwrap_or_else(Projection::default),
@@ -366,9 +367,9 @@ fn create_portal(
                         Camera3d::default(),
                         Camera {
                             order: -1,
-                            target: RenderTarget::Window(WindowRef::Entity(debug_window)),
                             ..Camera::default()
                         },
+                        RenderTarget::Window(WindowRef::Entity(debug_window)),
                         PortalDebugCamera {},
                         create_portal.render_layer.clone(),
                     ));
@@ -436,6 +437,7 @@ pub struct CreatePortalParams<'w, 's> {
         (
             Entity,
             &'static Camera,
+            &'static RenderTarget,
             Option<&'static Projection>,
             Option<&'static Camera3d>,
             Option<&'static Tonemapping>,
